@@ -5,12 +5,6 @@ import { GoogleGenAI, Type } from "@google/genai";
 // For self-deployment, set GEMINI_API_KEY in your environment variables.
 const API_KEY = process.env.GEMINI_API_KEY || "";
 
-if (!API_KEY || API_KEY === "MY_GEMINI_API_KEY") {
-  console.error("GEMINI_API_KEY is not defined or is placeholder. Please check your environment configuration.");
-} else {
-  console.log("GEMINI_API_KEY detected successfully.");
-}
-
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export interface Variation {
@@ -27,8 +21,8 @@ export interface RecognitionResult {
 
 export const geminiService = {
   async recognizeMistake(base64Image: string): Promise<RecognitionResult> {
-    if (!API_KEY || API_KEY === "MY_GEMINI_API_KEY") {
-      throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in environment variables.");
+    if (!API_KEY) {
+      throw new Error("Gemini API Key is missing. If you are in preview, please ensure the platform has provided the key. If deployed, set GEMINI_API_KEY in your environment.");
     }
 
     const response = await ai.models.generateContent({
@@ -73,8 +67,8 @@ export const geminiService = {
   },
 
   async generateVariations(question: string, knowledgePoint: string): Promise<Variation[]> {
-    if (!API_KEY || API_KEY === "MY_GEMINI_API_KEY") {
-      throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in environment variables.");
+    if (!API_KEY) {
+      throw new Error("Gemini API Key is missing. If you are in preview, please ensure the platform has provided the key. If deployed, set GEMINI_API_KEY in your environment.");
     }
 
     const response = await ai.models.generateContent({
