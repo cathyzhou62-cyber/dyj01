@@ -40,8 +40,15 @@ const Button = ({ children, onClick, disabled, className, variant = 'primary' }:
   );
 };
 
+const GUEST_USER = {
+  uid: 'guest_user',
+  displayName: '访客用户',
+  photoURL: 'https://api.dicebear.com/7.x/avataaars/svg?seed=guest',
+  email: 'guest@example.com'
+};
+
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(GUEST_USER);
   const [activeTab, setActiveTab] = useState<'recognition' | 'workbook'>('recognition');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -57,10 +64,15 @@ export default function App() {
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
 
   useEffect(() => {
+    // Attempt to sync with Firebase if authenticated, otherwise use guest state
     const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
       if (u) {
+        setUser(u);
         fetchRecords(u.uid);
+      } else {
+        // Even if not logged in, we try to fetch records for the guest user
+        // (Note: This will work if Firestore rules allow it)
+        fetchRecords(GUEST_USER.uid);
       }
     });
     return unsubscribe;
@@ -88,7 +100,7 @@ export default function App() {
       console.log("Logged in:", result.user);
     } catch (error: any) {
       console.error("Login failed", error);
-      alert("登录失败: " + (error.message || "未知错误") + "\n请检查域名是否已添加到 Firebase 已授权网域。");
+      // We don't block the user anymore, just log the error
     }
   };
 
@@ -245,30 +257,8 @@ export default function App() {
     html2pdf().set(opt).from(element).save();
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#F0F2F5] flex flex-col items-center justify-center p-6 font-sans">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full text-center space-y-8 bg-white p-10 rounded-3xl shadow-xl border border-border"
-        >
-          <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-primary/20">
-            <Sparkles className="text-white w-10 h-10" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-3xl font-extrabold text-[#1E293B] tracking-tight tracking-[-0.02em]">SmartPrint.</h1>
-            <p className="text-gray-500 font-medium tracking-tight">智能识别错题，生成变式解析，一键打印</p>
-          </div>
-          <Button onClick={login} className="w-full py-4 text-lg">
-            <CheckCircle2 className="w-5 h-5" /> 立即登录开启学习
-          </Button>
-          <p className="text-xs text-gray-400">登入即代表您同意我们的服务条款</p>
-        </motion.div>
-      </div>
-    );
-  }
-
+  // Remove the auth guard that returns a login screen
+  
   return (
     <div className="flex min-h-screen bg-bg-page font-sans text-[#1A1A1A]">
       {/* Sidebar Navigation */}
@@ -309,7 +299,12 @@ export default function App() {
           <img src={user.photoURL || ''} className="w-9 h-9 rounded-full border border-white/20" />
           <div className="flex-1 min-w-0">
              <div className="text-sm font-bold truncate">{user.displayName}</div>
-             <div className="text-[10px] opacity-50">已上传 {records.length} 道题目</div>
+             <div className="flex items-center gap-2">
+               <div className="text-[10px] opacity-50">已上传 {records.length} 道题目</div>
+               {user.uid === 'guest_user' && (
+                 <button onClick={login} className="text-[10px] text-primary hover:underline font-bold">登录同步</button>
+               )}
+             </div>
           </div>
         </div>
       </nav>
@@ -619,25 +614,8 @@ export default function App() {
         </button>
       </nav>
 
-      {/* Auth State Overlay */}
-      {!user && (
-        <div className="fixed inset-0 bg-bg-page/80 backdrop-blur-md z-[100] flex items-center justify-center px-4">
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white p-8 rounded-3xl shadow-2xl border border-border max-w-sm w-full text-center"
-          >
-             <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="text-white w-8 h-8" />
-             </div>
-             <h2 className="text-2xl font-bold text-[#1E293B] mb-2 font-display">SmartPrint.</h2>
-             <p className="text-sm text-gray-500 mb-8 leading-relaxed">您的智能错题打印专家。<br/>请先登录以同步您的学习进度。</p>
-             <Button onClick={login} className="w-full py-4 text-sm font-bold uppercase tracking-widest">
-               通过 Google 账户登录
-             </Button>
-          </motion.div>
-        </div>
-      )}
+      {/* Auth State Overlay - Removed to allow guest access */}
+
 
       {/* Notifications */}
       <AnimatePresence>

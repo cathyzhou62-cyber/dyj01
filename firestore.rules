@@ -13,7 +13,11 @@ service cloud.firestore {
     }
 
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return (isSignedIn() && request.auth.uid == userId) || userId == 'guest_user';
+    }
+
+    function isAuthorized(userId) {
+      return (isSignedIn() && request.auth.uid == userId) || userId == 'guest_user';
     }
 
     function isValidId(id) {
@@ -26,21 +30,20 @@ service cloud.firestore {
              data.originalQuestion.size() <= 10000 &&
              data.knowledgePoint is string &&
              data.knowledgePoint.size() <= 500 &&
-             data.createdAt is timestamp;
+             (data.createdAt is timestamp || data.createdAt == null);
     }
 
     match /mistakes/{mistakeId} {
-      allow get: if isOwner(resource.data.userId);
-      allow list: if isOwner(resource.data.userId);
-      allow create: if isSignedIn() && 
-                      isOwner(request.resource.data.userId) &&
+      allow get: if isAuthorized(resource.data.userId);
+      allow list: if isAuthorized(resource.data.userId);
+      allow create: if isAuthorized(request.resource.data.userId) &&
                       isValidMistake(request.resource.data) &&
                       isValidId(mistakeId);
-      allow update: if isOwner(resource.data.userId) &&
-                      isOwner(request.resource.data.userId) &&
+      allow update: if isAuthorized(resource.data.userId) &&
+                      isAuthorized(request.resource.data.userId) &&
                       isValidMistake(request.resource.data) &&
                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['originalQuestion', 'originalAnalysis', 'knowledgePoint', 'variations']);
-      allow delete: if isOwner(resource.data.userId);
+      allow delete: if isAuthorized(resource.data.userId);
     }
   }
 }
