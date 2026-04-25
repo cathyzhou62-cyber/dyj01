@@ -467,40 +467,47 @@ export default function App() {
                 {/* Variations Card */}
                 <div className="bento-card flex-grow overflow-y-auto">
                   <div className="card-label">智能举一反三 (基于相同考点逻辑)</div>
-                  {variations.length > 0 ? (
-                    <div className="flex flex-col gap-4">
-                      {variations.map((v, i) => (
-                        <div key={i} className="var-box group">
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-extrabold text-primary opacity-40">VARIATION 0{i+1}</span>
+                  <div className="flex-grow overflow-y-auto px-1 -mx-1 space-y-4">
+                    {variations.length > 0 ? (
+                      <div className="flex flex-col gap-4 pb-4">
+                        {variations.map((v, i) => (
+                          <div key={i} className="var-box group">
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-extrabold text-primary opacity-40">VARIATION 0{i+1}</span>
+                              </div>
+                              <div className="text-sm font-bold text-[#334155] leading-relaxed whitespace-pre-wrap">{v.question}</div>
                             </div>
-                            <div className="text-sm font-bold text-[#334155] leading-relaxed whitespace-pre-wrap">{v.question}</div>
+                            <details className="mt-4 border-t border-dashed border-border pt-3">
+                              <summary className="list-none cursor-pointer text-[11px] font-bold text-primary hover:opacity-80 flex items-center gap-1.5 py-1">
+                                <Sparkles className="w-3.5 h-3.5" /> 显示答案与深度解析 <ChevronRight className="w-3 h-3 transition-transform group-open:rotate-90" />
+                              </summary>
+                              <div className="mt-3 p-4 bg-white border border-border rounded-xl text-xs space-y-4 shadow-sm animate-in slide-in-from-top-2">
+                                 <div>
+                                    <div className="text-gray-400 font-extrabold uppercase tracking-widest text-[9px] mb-1.5 flex items-center gap-1">
+                                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div> 正确答案
+                                    </div>
+                                    <div className="text-gray-900 font-bold text-sm bg-gray-50 p-2 rounded-lg border border-gray-100">{v.answer}</div>
+                                 </div>
+                                 <div className="pt-2">
+                                    <div className="text-accent font-extrabold uppercase tracking-widest text-[9px] mb-1.5 flex items-center gap-1">
+                                      <div className="w-1.5 h-1.5 bg-accent rounded-full"></div> 易错点深度解析
+                                    </div>
+                                    <div className="text-gray-600 leading-relaxed italic pr-2">{v.explanation}</div>
+                                 </div>
+                              </div>
+                            </details>
                           </div>
-                          <details className="mt-4">
-                            <summary className="list-none cursor-pointer text-[10px] font-bold text-primary hover:underline flex items-center gap-1">
-                              显示答案与解析 <ChevronRight className="w-3 h-3 transition-transform" />
-                            </summary>
-                            <div className="mt-3 p-3 bg-white border border-border rounded-lg text-xs space-y-3 shadow-sm animate-in slide-in-from-top-2">
-                               <div>
-                                  <div className="text-gray-400 font-bold uppercase tracking-widest text-[9px] mb-1">正确答案</div>
-                                  <div className="text-gray-900 font-bold">{v.answer}</div>
-                               </div>
-                               <div>
-                                  <div className="text-accent font-bold uppercase tracking-widest text-[9px] mb-1">易错点解析</div>
-                                  <div className="text-gray-600 leading-relaxed italic">{v.explanation}</div>
-                               </div>
-                            </div>
-                          </details>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center flex-grow py-20 text-gray-300 opacity-40">
-                      <Sparkles className="w-16 h-16 mb-4" />
-                      <p className="text-sm font-bold tracking-tight">点击上方按钮，AI 即可为您精准生成 3 道变式练习</p>
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-300 opacity-40">
+                        <Sparkles className="w-20 h-20 mb-6" />
+                        <p className="text-base font-bold tracking-tight mb-2">准备就绪</p>
+                        <p className="text-xs text-center max-w-[200px]">点击左侧“生成”按钮，AI 即可为您提取考点并智能生成 3 道变式练习</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
