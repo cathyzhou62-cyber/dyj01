@@ -21,8 +21,8 @@ export interface RecognitionResult {
 
 export const geminiService = {
   async recognizeMistake(base64Image: string): Promise<RecognitionResult> {
-    if (!API_KEY) {
-      throw new Error("Gemini API Key is missing. If you are in preview, please ensure the platform has provided the key. If deployed, set GEMINI_API_KEY in your environment.");
+    if (!API_KEY || API_KEY === "" || API_KEY === "MY_GEMINI_API_KEY") {
+      throw new Error("Gemini API Key 未设置。如果您已部署到 Vercel，请在 Vercel 项目设置中添加环境变量 GEMINI_API_KEY。如果在预览，请确保平台已注入该 Key。");
     }
 
     const response = await ai.models.generateContent({
@@ -67,8 +67,8 @@ export const geminiService = {
   },
 
   async generateVariations(question: string, knowledgePoint: string): Promise<Variation[]> {
-    if (!API_KEY) {
-      throw new Error("Gemini API Key is missing. If you are in preview, please ensure the platform has provided the key. If deployed, set GEMINI_API_KEY in your environment.");
+    if (!API_KEY || API_KEY === "" || API_KEY === "MY_GEMINI_API_KEY") {
+      throw new Error("Gemini API Key 未设置。如果您已部署到 Vercel，请在 Vercel 项目设置中添加环境变量 GEMINI_API_KEY。");
     }
 
     const response = await ai.models.generateContent({

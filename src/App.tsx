@@ -84,9 +84,11 @@ export default function App() {
   const login = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (error) {
+      const result = await signInWithPopup(auth, provider);
+      console.log("Logged in:", result.user);
+    } catch (error: any) {
       console.error("Login failed", error);
+      alert("登录失败: " + (error.message || "未知错误") + "\n请检查域名是否已添加到 Firebase 已授权网域。");
     }
   };
 
