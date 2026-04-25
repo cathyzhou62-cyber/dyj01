@@ -1,6 +1,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getApiKey = () => {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key || key === "MY_GEMINI_API_KEY" || key === "") {
+    console.warn("GEMINI_API_KEY is not set. AI features will not work.");
+    return null;
+  }
+  return key;
+};
+
+const ai = new GoogleGenAI({ apiKey: getApiKey() || "placeholder" });
 
 export interface Variation {
   question: string;
@@ -16,6 +25,9 @@ export interface RecognitionResult {
 
 export const geminiService = {
   async recognizeMistake(base64Image: string): Promise<RecognitionResult> {
+    const key = getApiKey();
+    if (!key) throw new Error("请在环境变量中设置 GEMINI_API_KEY 以使用 AI 识别功能。");
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: {
@@ -58,6 +70,9 @@ export const geminiService = {
   },
 
   async generateVariations(question: string, knowledgePoint: string): Promise<Variation[]> {
+    const key = getApiKey();
+    if (!key) throw new Error("请在环境变量中设置 GEMINI_API_KEY 以使用 AI 生成功能。");
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `基于以下错题内容和知识点，生成3道举一反三的变式题。
