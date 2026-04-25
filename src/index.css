@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4f46e5;
+  --color-accent: #f59e0b;
+  --color-bg-page: #f0f2f5;
+  --color-bg-card: #ffffff;
+  --color-border: #e2e8f0;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-page text-[#1A1A1A] font-sans;
+  }
+}
+
+@layer components {
+  .bento-card {
+    @apply bg-bg-card rounded-xl border border-border p-4 flex flex-col shadow-sm;
+  }
+
+  .card-label {
+    @apply text-[11px] font-bold uppercase text-primary tracking-wider mb-2.5;
+  }
+
+  .analysis-pill {
+    @apply inline-block px-3 py-1 bg-[#EEF2FF] text-primary rounded-full text-xs font-semibold mb-2 w-fit;
+  }
+
+  .error-analysis {
+    @apply text-sm text-[#64748B] pl-3 border-l-3 border-accent leading-relaxed;
+  }
+
+  .var-box {
+    @apply bg-[#FDFDFD] border border-[#F1F5F9] rounded-lg p-3 flex flex-col justify-between hover:border-primary/30 transition-colors;
+  }
+}
+
+.page-break-inside-avoid {
+  page-break-inside: avoid;
+}

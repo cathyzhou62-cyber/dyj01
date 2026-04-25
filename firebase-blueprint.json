@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "Mistake": {
+      "title": "Mistake",
+      "description": "A mistake record including original question and generated variations.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who owns this mistake record."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Base64 string or URL of the mistake image."
+        },
+        "originalQuestion": {
+          "type": "string",
+          "description": "The unrecognized text of the original mistake."
+        },
+        "originalAnalysis": {
+          "type": "string",
+          "description": "Analysis of the original mistake."
+        },
+        "knowledgePoint": {
+          "type": "string",
+          "description": "The extracted knowledge point name."
+        },
+        "variations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "answer": { "type": "string" },
+              "explanation": { "type": "string" }
+            }
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        }
+      },
+      "required": ["userId", "originalQuestion", "knowledgePoint", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/mistakes/{mistakeId}": {
+      "schema": "Mistake",
+      "description": "Collection of mistakes saved by users."
+    }
+  }
+}
